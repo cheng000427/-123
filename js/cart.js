@@ -78,7 +78,7 @@ $(() => {
     if (jsonStr !== null) {
         // 转换成数组
         arr = JSON.parse(jsonStr);
-        console.log(arr + '00000');
+
         // 遍历数组
         let html = '';
         arr.forEach(e => {
@@ -202,7 +202,7 @@ $(() => {
 
         // 更改完之后要覆盖回去
         let jsonStr = JSON.stringify(arr);
-        localStorage.getItem('cartDate', jsonStr)
+        localStorage.setItem('cartDate', jsonStr)
 
         // 重新计算总和和总数
         computedCountAndMoney();
@@ -241,7 +241,7 @@ $(() => {
 
         // 更改完之后要覆盖回去
         let jsonStr = JSON.stringify(arr);
-        localStorage.getItem('cartDate', jsonStr)
+        localStorage.setItem('cartDate', jsonStr)
 
         // 重新计算总和和总数
         computedCountAndMoney();
@@ -249,33 +249,39 @@ $(() => {
         // 对应的商品也要计算
         $(this).parents('.item').find('.computed').text(ojb.price * obj.number)
     })
-
-    // 实现删除
-    $('.item-list').on('click','.item-del',function(){
-        // 保存一个当前this
-        let _this=this;
-        // 点击之后弹出一个确认框
-        $('#dialog-confirm').dialog({
-            resizable:false,
-            height:140,
-            modal:true,
-            buttons:{
-                "确认":function(){
-                    $(this).dialog('close');
-                    let id=parseInt($(_this).parents('.item').attr('data-id'));
-                    let index=arr.findIndex((e)=>{
-                        return e.pID===id
-                    })
-                    arr.splice(index,1);
-                    //  把数据覆盖回本地
-                    let jsonStr=JSON.stringify(arr);
-                    localStorage.setItem('cartDate',jsonStr)
-                },
-                "取消":function(){
-                    $(this).dialog('close')
-                }
+    $('.item-list').on('click', '.item-del', function () {
+        // 因为我们的删除的动作是在点击确定之后进行，点击确定是另外一个函数了，该函数里面的this已经不是移除按钮，我们可以在这里先保存一个this
+        let _this = this;// 这是一个习惯
+        // 弹出一个确认框
+        $("#dialog-confirm").dialog({
+          resizable: false,
+          height: 140,
+          modal: true,
+          buttons: {
+            "确认": function () {
+              $(this).dialog("close");
+              // 把对应的商品删除
+              // 把对应的结构移除
+              $(_this).parents('.item').remove();
+              // 把本地数据移除
+              // 我们现在需要根据id获取本地存储里面的数据
+              let id = parseInt($(_this).parents('.item').attr('data-id'));  
+              let index = arr.findIndex((e)=>{
+                return e.pID === id
+              })
+              console.log(index);
+              arr.splice(index, 1);
+              // 把数据覆盖回本地
+              let jsonStr = JSON.stringify(arr);
+              console.log(jsonStr);
+              localStorage.setItem('cartDate', jsonStr);
+              console.log(localStorage.setItem('cartDate', jsonStr))
+            },
+            "取消": function () {
+              $(this).dialog("close");
             }
-        })
-    })
+          }
+        });
+      });
 
 })
