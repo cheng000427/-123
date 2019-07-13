@@ -208,7 +208,7 @@ $(() => {
         computedCountAndMoney();
 
         // 对应的商品也要计算
-        $(this).parents('.item').find('.computed').text(ojb.price * obj.number)
+        $(this).parents('.item').find('.computed').text(obj.price * obj.number)
     })
 
       // 获取减号
@@ -249,4 +249,33 @@ $(() => {
         // 对应的商品也要计算
         $(this).parents('.item').find('.computed').text(ojb.price * obj.number)
     })
+
+    // 实现删除
+    $('.item-list').on('click','.item-del',function(){
+        // 保存一个当前this
+        let _this=this;
+        // 点击之后弹出一个确认框
+        $('#dialog-confirm').dialog({
+            resizable:false,
+            height:140,
+            modal:true,
+            buttons:{
+                "确认":function(){
+                    $(this).dialog('close');
+                    let id=parseInt($(_this).parents('.item').attr('data-id'));
+                    let index=arr.findIndex((e)=>{
+                        return e.pID===id
+                    })
+                    arr.splice(index,1);
+                    //  把数据覆盖回本地
+                    let jsonStr=JSON.stringify(arr);
+                    localStorage.setItem('cartDate',jsonStr)
+                },
+                "取消":function(){
+                    $(this).dialog('close')
+                }
+            }
+        })
+    })
+
 })
