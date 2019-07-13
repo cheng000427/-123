@@ -78,7 +78,7 @@ $(() => {
     if (jsonStr !== null) {
         // 转换成数组
         arr = JSON.parse(jsonStr);
-        console.log(arr+'00000');
+        console.log(arr + '00000');
         // 遍历数组
         let html = '';
         arr.forEach(e => {
@@ -123,6 +123,130 @@ $(() => {
         // 把计算总和 和总数 显示
         $('.cart-header').removeClass('hidden');
         $('.total-of').removeClass('hidden');
-        
     }
+
+    // 计算总和和总价
+    function computedCountAndMoney() {
+        // 计算出总和 总价
+        // 根据选中的多选框,得到选中商品的id
+        let totalCount = 0;
+        let totalMoney = 0;
+        $('.item-list input[type=checkbox]:checked').each((i, e) => {
+            // 获取id
+            let id = parseInt($(e).parents('.item').attr('data-id'));
+            // 遍历
+            arr.forEach(e => {
+                if (id == e.pID) {
+                    totalCount += e.number;
+                    totalMoney += e.number * e.price;
+                }
+            })
+        })
+        // 修改总和总数量
+        $('.total-money').text(totalMoney);
+        $('.selected').text(totalCount)
+    }
+    // 调用
+    computedCountAndMoney();
+
+
+    // 全选和全不选
+    $('.pick-all').on('click', function () {
+        // 查看自己的当前状态
+        let abks = $(this).prop('checked');
+        // 设置每个商品都跟自己状态一样
+        $('.item-ck').prop('checked', abks);
+        // 把两个全选状态都同步
+        $('.pick-all').prop('checked', abks);
+
+        // 调用计算总和总数的函数
+        computedCountAndMoney();
+    })
+
+    $('.item-ck').on('click', function () {
+        // 判断是否全选
+        let alls = $('.item-ck').length === $('.item-ck:checked').length;
+
+        $('.pick-all').prop('checked', alls);
+
+        // 调用计算总和总数的函数
+        computedCountAndMoney();
+    })
+
+
+
+    // 委托方式 实现加减商品
+
+    // 获取加号
+    $('.item-list').on('click', '.add', function () {
+        // 点击加号对应的文本框数字加1
+        // 得到之前的数据
+        let odlVal = parseInt($(this).siblings('input').val())
+        // 点击加1
+        odlVal++;
+        // 判断当odl大于1的时候 禁用鼠标启用
+        if (odlVal > 1) {
+            $(this).siblings('.reduce').removeClass('disabled')
+        }
+        // 把新数据设置回去
+        $(this).siblings('input').val(odlVal);
+
+        // 把本地数据更新
+        // 点击的按钮对应的商品id
+        let id = parseInt($(this).parents('.item').attr('data-id'));
+        let obj = arr.find(e => {
+            return e.pID === id
+        })
+        // 更新对应的数据
+        obj.number = odlVal;
+
+        // 更改完之后要覆盖回去
+        let jsonStr = JSON.stringify(arr);
+        localStorage.getItem('cartDate', jsonStr)
+
+        // 重新计算总和和总数
+        computedCountAndMoney();
+
+        // 对应的商品也要计算
+        $(this).parents('.item').find('.computed').text(ojb.price * obj.number)
+    })
+
+      // 获取减号
+      $('.item-list').on('click', '.reduce', function () {
+        // 点击减号对应的文本框数字减1
+        // 得到之前的数据
+        let odlVal = parseInt($(this).siblings('input').val())
+        // 如果当前是1就不能再减了
+        if(odlVal===1){
+            $(this).addClass('disabled')
+            return;
+        }
+        // 点击加1
+        odlVal--;
+        // 判断当odl大于1的时候 禁用鼠标启用
+        if (odlVal === 1) {
+            $(this).addClass('disabled')
+        }
+        // 把新数据设置回去
+        $(this).siblings('input').val(odlVal);
+
+        // 把本地数据更新
+        // 点击的按钮对应的商品id
+        let id = parseInt($(this).parents('.item').attr('data-id'));
+        let obj = arr.find(e => {
+            return e.pID === id
+        })
+        // 更新对应的数据
+        obj.number = odlVal;
+
+        // 更改完之后要覆盖回去
+        let jsonStr = JSON.stringify(arr);
+        localStorage.getItem('cartDate', jsonStr)
+
+        // 重新计算总和和总数
+        computedCountAndMoney();
+
+        // 对应的商品也要计算
+        $(this).parents('.item').find('.computed').text(ojb.price * obj.number)
+    })
 })
