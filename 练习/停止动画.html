@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      background-color: green;
+      position: absolute;
+      top: 100px;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+    <input type="button" value="停止" id="btn">
+  <div class="box"></div>
+</body>
+<script src="./js/jquery-2.2.2.js"></script>
+
+<script>
+
+    $(()=>{
+
+        $('.box').animate({left:800},1000,)
+        .animate({top:500},1000)
+        .animate({left:300},2000)
+        .animate({top:200},2000)
+
+    })
+
+    let btn=$('#btn')
+    btn.on('click',function(){
+        // $('.box').stop(true,true);
+        // $('.box').stop(true,false)
+        // $('.box').stop(false,true)
+        $('.box').stop(false,false)
+    })
+
+
+</script>
+</html>
